@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getJournals, getWeeklyInsights } from "@/lib/api";
-import Header from "../components/Header";
+import AppLayout from "../components/AppLayout";
 
 interface Journal {
   _id: string;
@@ -78,82 +78,79 @@ export default function JournalsPage() {
   }
 
 return (
-  <div className="min-h-screen bg-gray-100">
-    <Header />
-    <div className="p-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Journals</h1>
-          <div className="flex gap-2">
-            <button
-              onClick={handleGetInsights}
-              disabled={insightsLoading}
-              className="bg-purple-300 text-white px-4 py-2 rounded-lg hover:bg-purple-500 disabled:bg-gray-400"
-            >
-              {insightsLoading ? "Analyzing..." : "Weekly Insights"}
-            </button>
-            <button
-              onClick={() => router.push("/journals/new")}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-            >
-              + New Entry
-            </button>
-          </div>
+  <AppLayout>
+    <div className="max-w-3xl">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">My Journals</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={handleGetInsights}
+            disabled={insightsLoading}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400"
+          >
+            {insightsLoading ? "Analyzing..." : "Weekly Insights"}
+          </button>
+          <button
+            onClick={() => router.push("/journals/new")}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            + New Entry
+          </button>
         </div>
-
-        {insightsError && (
-          <div className="bg-red-100 text-red-600 p-4 rounded-lg mb-6">
-            {insightsError}
-          </div>
-        )}
-
-        {insights && (
-          <div className="bg-green-50 border border-green-200 p-6 rounded-lg mb-6">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-xl font-semibold text-green-800">Weekly Insights</h2>
-              <button
-                onClick={() => setInsights(null)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            <p className="whitespace-pre-wrap text-gray-700">{insights}</p>
-          </div>
-        )}
-
-        {journals.length === 0 ? (
-          <div className="bg-white p-8 rounded-lg shadow text-center">
-            <p className="text-gray-600">No journal entries yet.</p>
-            <p className="text-gray-500 mt-2">Click &apos;New Entry&apos; to create one.</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {journals.map((journal) => (
-              <div
-                key={journal._id}
-                onClick={() => router.push(`/journals/${journal._id}`)}
-                className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-md transition"
-              >
-                <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-semibold">{journal.title}</h2>
-                  <span className="text-2xl">{getMoodEmoji(journal.mood)}</span>
-                </div>
-                <p className="text-gray-500 mt-2">
-                  {new Date(journal.createdAt).toLocaleDateString()}
-                </p>
-                {journal.analysis && (
-                  <span className="text-purple-400 text-sm mt-2 inline-block">
-                    ✓ Analyzed
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
+
+      {insightsError && (
+        <div className="bg-red-100 text-red-600 p-4 rounded-lg mb-6">
+          {insightsError}
+        </div>
+      )}
+
+      {insights && (
+        <div className="bg-green-50 border border-green-200 p-6 rounded-lg mb-6">
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-xl font-semibold text-green-800">Weekly Insights</h2>
+            <button
+              onClick={() => setInsights(null)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+          </div>
+          <p className="whitespace-pre-wrap text-gray-700">{insights}</p>
+        </div>
+      )}
+
+      {journals.length === 0 ? (
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <p className="text-gray-600">No journal entries yet.</p>
+          <p className="text-gray-500 mt-2">Click &apos;New Entry&apos; to create one.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {journals.map((journal) => (
+            <div
+              key={journal._id}
+              onClick={() => router.push(`/journals/${journal._id}`)}
+              className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-md transition"
+            >
+              <div className="flex justify-between items-start">
+                <h2 className="text-xl font-semibold">{journal.title}</h2>
+                <span className="text-2xl">{getMoodEmoji(journal.mood)}</span>
+              </div>
+              <p className="text-gray-500 mt-2">
+                {new Date(journal.createdAt).toLocaleDateString()}
+              </p>
+              {journal.analysis && (
+                <span className="text-green-600 text-sm mt-2 inline-block">
+                  ✓ Analyzed
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  </div>
+  </AppLayout>
 );
 
 }

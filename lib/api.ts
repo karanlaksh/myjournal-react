@@ -70,3 +70,10 @@ export async function getWeeklyInsights(token: string) {
   });
   return res.json();
 }
+
+export async function searchYouTubeVideos(query: string, token: string) {
+  const res = await fetch(`${API_URL}/youtube/search?q=${encodeURIComponent(query)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
