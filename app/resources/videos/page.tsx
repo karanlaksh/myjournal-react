@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import AppLayout from "../../components/AppLayout";
@@ -14,7 +15,7 @@ interface Video {
   publishedAt: string;
 }
 
-export default function VideosPage() {
+function VideosContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
@@ -63,35 +64,39 @@ export default function VideosPage() {
   }
 
   if (loading) {
-    return (
-      <AppLayout>
-        <p className="text-gray-600">Loading...</p>
-      </AppLayout>
-    );
+    return <p className="text-gray-600">Loading...</p>;
   }
 
   return (
-    <AppLayout>
-      <div className="max-w-5xl">
-        <button onClick={goBack} className="text-blue-500 hover:underline mb-6 inline-block">
-          ← Back to Resources
-        </button>
+    <div className="max-w-5xl">
+      <button onClick={goBack} className="text-blue-500 hover:underline mb-6 inline-block">
+        ← Back to Resources
+      </button>
 
-        <h1 className="text-3xl font-bold mb-2">Video Results</h1>
-        <p className="text-gray-600 mb-6">Showing results for: {query}</p>
+      <h1 className="text-3xl font-bold mb-2">Video Results</h1>
+      <p className="text-gray-600 mb-6">Showing results for: {query}</p>
 
-        {error && <div className="bg-red-100 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
+      {error && <div className="bg-red-100 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
 
-        {videos.length === 0 && !error && (
-          <div className="bg-white p-8 rounded-lg shadow text-center">
-            <p className="text-gray-600">No videos found. Try a different search.</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map(renderVideo)}
+      {videos.length === 0 && !error && (
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <p className="text-gray-600">No videos found. Try a different search.</p>
         </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {videos.map(renderVideo)}
       </div>
+    </div>
+  );
+}
+
+export default function VideosPage() {
+  return (
+    <AppLayout>
+      <Suspense fallback={<p className="text-gray-600">Loading...</p>}>
+        <VideosContent />
+      </Suspense>
     </AppLayout>
   );
 }
